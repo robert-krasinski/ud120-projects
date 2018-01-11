@@ -25,8 +25,16 @@ features_train, features_test, labels_train, labels_test = cross_validation.trai
 from sklearn.feature_extraction.text import TfidfVectorizer
 vectorizer = TfidfVectorizer(sublinear_tf=True, max_df=0.5,
                              stop_words='english')
+
+for index, feature in enumerate(features_train):
+    features_train[index] = feature.replace("sshacklensf", "").replace("cgermannsf", "")
+
+
+
 features_train = vectorizer.fit_transform(features_train)
 features_test  = vectorizer.transform(features_test).toarray()
+
+
 
 
 ### a classic way to overfit is to use a small number
@@ -38,6 +46,20 @@ labels_train   = labels_train[:150]
 
 
 ### your code goes here
+from sklearn import tree
+clf = tree.DecisionTreeClassifier()
+clf = clf.fit(features_train, labels_train)
+predict_test = clf.predict(features_test)
+
+from sklearn.metrics import accuracy_score
+
+score = accuracy_score(labels_test, predict_test)
+print score
+
+for index, featureImportance in enumerate(clf.feature_importances_):
+    if(featureImportance > 0.2) :
+        print str(index) + ' : ' + ' : '+ vectorizer.get_feature_names()[index] + ' : '+ str(featureImportance)
+
 
 
 
